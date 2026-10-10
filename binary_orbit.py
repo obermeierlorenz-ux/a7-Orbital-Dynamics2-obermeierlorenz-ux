@@ -44,7 +44,7 @@ print('Int center of mass:', center_of_mass_position(bodies))
 n_steps = 2000
 h = T10 / n_steps
 
-time_values = []
+time_values = [0.0]
 for steps in range (n_steps):
     vel_verlet(bodies, h, G)
     time_values.append((steps+1) * h )
@@ -89,4 +89,92 @@ plt.show()
 #calculate the Energie 
 K_all, U_all, E_all, K_system, U_system, E_system = system_energy(bodies, G)
 
-fig2, axes = plt.subplot(3, 1, figursize=(8, 10), sharex = True)
+
+fig2, axes = plt.subplots(3, 1, figsize=(8, 10), sharex=True)
+
+# Kinetic energy
+axes[0].plot(time_values, K_all[:, 0],
+             label='Body 1')
+
+axes[0].plot(time_values, K_all[:, 1],
+             label='Body 2')
+
+axes[0].plot(time_values, K_system,
+             color='black', linestyle='--',
+             label='System total')
+
+axes[0].set_ylabel('Kinetic energy K')
+axes[0].set_title('Energy History of the Binary System')
+axes[0].grid()
+axes[0].legend()
+
+
+# Potential energy
+axes[1].plot(time_values, U_all[:, 0],
+             label='Body 1')
+
+axes[1].plot(time_values, U_all[:, 1],
+             label='Body 2')
+
+axes[1].plot(time_values, U_system,
+             color='black', linestyle='--',
+             label='System total')
+
+axes[1].set_ylabel('Potential energy U')
+axes[1].grid()
+axes[1].legend()
+
+
+# Total energy
+axes[2].plot(time_values, E_all[:, 0],
+             label='Body 1')
+
+axes[2].plot(time_values, E_all[:, 1],
+             label='Body 2')
+
+axes[2].plot(time_values, E_system,
+             color='black', linestyle='--',
+             label='System total')
+
+axes[2].set_xlabel('Time t')
+axes[2].set_ylabel('Total energy E')
+axes[2].grid()
+axes[2].legend()
+
+plt.tight_layout()
+plt.show()
+
+#measure period
+#guess the period , take the index of the max_kin_values and use the associated time value
+#calculate the time between two max = period
+
+def measure_period_from_energy(kinetic_energy,
+                 time_values):
+    peak_indices = []
+
+    for i in range(len(kinetic_energy)):
+        if (kinetic_energy[i] > kinetic_energy[i-1]
+        and kinetic_energy[i] > kinetic_energy[i+1]):
+            peak_indices.append(i)
+
+    peak_times = time_values[peak_indices]
+    periods = np.diff(peak_times)
+
+    return np.mean(periods)
+
+period_body1 = measure_period_from_energy(K_all[:,0], time_values)
+period_body2 = measure_period_from_energy(K_all[:,1], time_values)
+
+#comparison
+period_diff = period_body2 - period_body1
+print(f"period body1:{period_body1}")
+print(f"period body1:{period_body2}")
+
+print()
+print(f"period difference between the two bodies:{period_diff}")
+print()
+comp = Time_period-period_body1
+print (f'expected - measured : {comp}')
+
+#periapsis apoapsis
+
