@@ -139,3 +139,48 @@ def system_energy(bodies: list[Body],
     E_system = np.sum(E_all, axis=1)
 
     return K_all, U_all, E_all, K_system, U_system, E_system
+
+#center of Mass and Momentum
+def total_momentum(bodies: list[Body]):
+
+    p_values = []
+    for i in range(len(bodies)):
+        p = bodies[i].mass * bodies[i].velocity
+        p_values.append(p)
+
+    return np.sum(p_values, axies=0)
+
+def center_of_mass_postion(bodies: list[Body]):
+
+    weighted_position = []
+    masses = []
+
+    for i in range(len(bodies)): 
+        weighted_position = bodies[i].mass * bodies[i].postion
+        weighted_position.append(weighted_position)
+
+        masses.append(bodies[i].mass)
+    return np.sum(weighted_position, axis=0)/ np.sum(masses)
+
+def center_of_mass_velocity(bodies: list[Body]):
+
+    weighted_velocity = []
+    masses = []
+
+    for i in range(len(bodies)):
+        weighted_velocity = bodies[i].mass * bodies[i].velocity
+        weighted_velocity.append(weighted_velocity)
+
+        masses.append(bodies[i].mass)
+    return np.sum(weighted_velocity, axis=0)/ np.sum(masses)
+
+def move_to_center_of_mass_frame(bodies: list[Body]):
+
+    position_cm = center_of_mass_postion(bodies)
+    velocity_cm = center_of_mass_velocity(bodies)
+
+    for i in range(len(bodies)):
+        #changes the position and velocity direct, so no return necassary
+        bodies[i].position = bodies[i].postion - position_cm
+        
+        bodies[i].velocity = bodies[i].velocity - velocity_cm
