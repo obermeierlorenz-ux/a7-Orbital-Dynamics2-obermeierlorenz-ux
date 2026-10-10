@@ -45,7 +45,7 @@ def all_acc(bodies: list[Body],
 #velocity
 
 def vel_verlet(bodies: list[Body], 
-               h, float, 
+               h: float, 
                G: float)->None:
 
     #all acceleration at timt t
@@ -59,13 +59,13 @@ def vel_verlet(bodies: list[Body],
 
         body = bodies[i]
 
-        postion_new = body.position + body.velocity * h + 0.5 * accelerations_old[i] * h**2
+        position_new = body.position + body.velocity * h + 0.5 * accelerations_old[i] * h**2
 
-    new_positions.append(postion_new)
+        new_positions.append(position_new)
 
     #apply all new postions simultaneously
     for i in range(len(bodies)):
-        bodies[i].postion = new_positions[i]
+        bodies[i].position = new_positions[i]
 
     #calculation of all accelerations for the new postions
     accelerations_new = all_acc(bodies, G)
@@ -77,3 +77,65 @@ def vel_verlet(bodies: list[Body],
 
     for body in bodies: 
         body.record_state()
+
+
+def system_energy(bodies: list[Body],
+                  G: float):
+
+    
+    # Number of stored time values
+    N = len(bodies[0].position_history)
+
+    #List for Energie over time 
+    K_all = []
+    U_all = []
+    E_all = []
+
+    for iter in range (N):
+        #Kinetic Energie
+        K_values = []
+        for i in range(len(bodies)):
+            v_i = np.linalg.norm(bodies[i].velocity_history[iter])# gives me one number v_i
+            K = 1/2 * bodies[i].mass * v_i**2 
+            K_values.append(K)
+        K_sum = sum(K_values)
+        
+
+
+        #Potential energy
+        # Potential energy of every body
+        U_values = np.zeros(len(bodies))
+        #U_pot = []
+        for i in range(len(bodies)-1):
+            for j in range(i+1, (len(bodies))):
+
+                displacement = bodies[i].position_history[iter] - bodies[j].position_history[iter]
+                distance_ij = np.linalg.norm(displacement)# gives me one number r_ij
+
+                U = -(G * bodies[i].mass * bodies[j].mass) / distance_ij
+                #U_pot.append(U)
+                 # Half of the pair energy belongs to each body
+                U_values[i] += 0.5 * U
+                U_values[j] += 0.5 * U
+
+        K_values = np.array(K_values)
+
+        # Total energy of each individual body
+        E_values = K_values + U_values
+
+        # Store individual body energies at this time
+        K_all.append(K_values)
+        U_all.append(U_values)
+        E_all.append(E_values)
+
+    # Convert energy histories to NumPy arrays
+    K_all = np.array(K_all)
+    U_all = np.array(U_all)
+    E_all = np.array(E_all)
+
+    # Sum over all bodies at every time value
+    K_system = np.sum(K_all, axis=1)
+    U_system = np.sum(U_all, axis=1)
+    E_system = np.sum(E_all, axis=1)
+
+    return K_all, U_all, E_all, K_system, U_system, E_system

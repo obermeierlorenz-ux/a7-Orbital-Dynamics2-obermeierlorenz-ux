@@ -11,8 +11,8 @@ class Body:
         self.velocity = np.array(velocity, dtype = float)
 
         #history
-        self.position_history = [self.position.copy()]
-        self.velocity_history = [self.velocity.copy()]
+        self.position_history = []
+        self.velocity_history = []
 
     def record_state(self)-> None:
 
