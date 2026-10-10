@@ -2,7 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from body import Body
 from simulation import (move_to_center_of_mass_frame, vel_verlet,
-                        total_momentum, center_of_mass_position)
+                        total_momentum, center_of_mass_position,
+                        system_energy)
 
 
 m1 = 1.0
@@ -83,3 +84,9 @@ ax.grid()
 ax.legend()
 
 plt.show()
+
+#Energie plot
+#calculate the Energie 
+K_all, U_all, E_all, K_system, U_system, E_system = system_energy(bodies, G)
+
+fig2, axes = plt.subplot(3, 1, figursize=(8, 10), sharex = True)
