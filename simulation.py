@@ -62,3 +62,18 @@ def vel_verlet(bodies: list[Body],
         postion_new = body.position + body.velocity * h + 0.5 * accelerations_old[i] * h**2
 
     new_positions.append(postion_new)
+
+    #apply all new postions simultaneously
+    for i in range(len(bodies)):
+        bodies[i].postion = new_positions[i]
+
+    #calculation of all accelerations for the new postions
+    accelerations_new = all_acc(bodies, G)
+
+    #calculation of velocity 
+    for i in range(len(bodies)):
+
+        bodies[i].velocity = bodies[i].velocity + 0.5 * (accelerations_old[i] + accelerations_new[i]) * h
+
+    for body in bodies: 
+        body.record_state()
