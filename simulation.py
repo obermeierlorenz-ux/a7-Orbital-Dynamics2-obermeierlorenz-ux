@@ -148,39 +148,39 @@ def total_momentum(bodies: list[Body]):
         p = bodies[i].mass * bodies[i].velocity
         p_values.append(p)
 
-    return np.sum(p_values, axies=0)
+    return np.sum(p_values, axis=0)
 
-def center_of_mass_postion(bodies: list[Body]):
+def center_of_mass_position(bodies: list[Body]):
 
-    weighted_position = []
+    weighted_positions = []
     masses = []
 
     for i in range(len(bodies)): 
-        weighted_position = bodies[i].mass * bodies[i].postion
-        weighted_position.append(weighted_position)
+        weighted_position = bodies[i].mass * bodies[i].position
+        weighted_positions.append(weighted_position)
 
         masses.append(bodies[i].mass)
-    return np.sum(weighted_position, axis=0)/ np.sum(masses)
+    return np.sum(weighted_positions, axis=0)/ np.sum(masses)
 
 def center_of_mass_velocity(bodies: list[Body]):
 
-    weighted_velocity = []
+    weighted_velocitys = []
     masses = []
 
     for i in range(len(bodies)):
         weighted_velocity = bodies[i].mass * bodies[i].velocity
-        weighted_velocity.append(weighted_velocity)
+        weighted_velocitys.append(weighted_velocity)
 
         masses.append(bodies[i].mass)
-    return np.sum(weighted_velocity, axis=0)/ np.sum(masses)
+    return np.sum(weighted_velocitys, axis=0)/ np.sum(masses)
 
 def move_to_center_of_mass_frame(bodies: list[Body]):
 
-    position_cm = center_of_mass_postion(bodies)
+    position_cm = center_of_mass_position(bodies)
     velocity_cm = center_of_mass_velocity(bodies)
 
     for i in range(len(bodies)):
         #changes the position and velocity direct, so no return necassary
-        bodies[i].position = bodies[i].postion - position_cm
+        bodies[i].position = bodies[i].position - position_cm
         
         bodies[i].velocity = bodies[i].velocity - velocity_cm
