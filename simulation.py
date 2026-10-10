@@ -7,7 +7,7 @@ def pair_acc (body_i: Body,
          body_j: Body, 
          G: float,) -> list[np.ndarray]:
 
-    displacement = body_i.position - body_j.position
+    displacement = body_j.position - body_i.position
 
     #distance of two dodies
     #distance_ij = (displacement**2)**(1/2)
@@ -22,7 +22,7 @@ def pair_acc (body_i: Body,
 
 #multiebody acceleration
 def all_acc(bodies: list[Body],
-            G: float)->list[np.ndarray]:
+            G: float)->np.ndarray:
 
     #list of all acceleration vectors acting on body_i
     accelerations = []
@@ -42,4 +42,23 @@ def all_acc(bodies: list[Body],
 
     return accelerations
 
+#velocity
 
+def vel_verlet(bodies: list[Body], 
+               h, float, 
+               G: float)->None:
+
+    #all acceleration at timt t
+    accelerations_old = all_acc(bodies, G)
+
+    new_positions = []
+
+    #
+    for i in range(len(bodies)):
+
+
+        body = bodies[i]
+
+        postion_new = body.position + body.velocity * h + 0.5 * accelerations_old[i] * h**2
+
+    new_positions.append(postion_new)
