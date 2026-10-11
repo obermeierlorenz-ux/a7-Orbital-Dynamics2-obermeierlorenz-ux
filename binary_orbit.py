@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from body import Body
 from simulation import (move_to_center_of_mass_frame, vel_verlet,
                         total_momentum, center_of_mass_position,
-                        system_energy)
+                        system_energy,  measure_period_from_energy)
 
 
 m1 = 1.0
@@ -148,20 +148,6 @@ plt.show()
 #guess the period , take the index of the max_kin_values and use the associated time value
 #calculate the time between two max = period
 
-def measure_period_from_energy(kinetic_energy,
-                 time_values):
-    peak_indices = []
-
-    for i in range(len(kinetic_energy)):
-        if (kinetic_energy[i] > kinetic_energy[i-1]
-        and kinetic_energy[i] > kinetic_energy[i+1]):
-            peak_indices.append(i)
-
-    peak_times = time_values[peak_indices]
-    periods = np.diff(peak_times)
-
-    return np.mean(periods)
-
 period_body1 = measure_period_from_energy(K_all[:,0], time_values)
 period_body2 = measure_period_from_energy(K_all[:,1], time_values)
 
@@ -177,4 +163,62 @@ comp = Time_period-period_body1
 print (f'expected - measured : {comp}')
 
 #periapsis apoapsis
+
+r_body1 = np.linalg.norm(positions1, axis=1)
+r_body2 = np.linalg.norm(positions2, axis=1)
+
+r1_peri = np.min(r_body1)
+r1_apo = np.max(r_body1)
+
+r2_peri = np.min(r_body2)
+r2_apo = np.max(r_body2)
+
+a1 = 0.5 * (r1_apo + r1_peri)
+a2 = 0.5 * (r2_apo + r2_peri)
+
+#eccentricities
+e1 = (r1_apo - r1_peri) / (r1_apo + r1_peri)
+e2 = (r2_apo - r2_peri) / (r2_apo + r2_peri)
+
+#comparison
+print()
+print('Body 1 periapsis:', r1_peri)
+print('Body 1 apoapsis:', r1_apo)
+print('Body 1 a:', a1)
+print('Body 1 eccentricity:', e1)
+print()
+print('Body 2 periapsis:', r2_peri)
+print('Body 2 apoapsis:', r2_apo)
+print('Body 2 a:', a2)
+print('Body 2 eccentricity:', e2)
+print()
+print('a1 / a2:', a1 / a2)
+print('m2 / m1:', m2 / m1)
+
+
+
+#last part of ex. 1
+# Initial total momentum in the center-of-mass frame
+initial_momentum = total_momentum(bodies)
+print('Initial total momentum:', initial_momentum)
+
+# Center-of-mass position at every stored time
+cm_positions = (m1 * positions1 + m2 * positions2) / (m1 + m2)
+
+# Deviation from the initial center-of-mass position
+cm_deviation = np.linalg.norm(cm_positions - cm_positions[0], axis=1)
+
+# Plot center-of-mass deviation
+fig3 = plt.figure()
+ax3 = fig3.add_axes([0.12, 0.12, 0.80, 0.80])
+
+ax3.plot(time_values, cm_deviation)
+ax3.set_xlabel('Time t')
+ax3.set_ylabel('Center-of-mass deviation')
+ax3.set_title('Center-of-Mass Deviation')
+ax3.grid()
+
+plt.show()
+
+
 

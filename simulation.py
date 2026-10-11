@@ -1,5 +1,7 @@
 import numpy as np
 from body import Body
+import matplotlib.pyplot as plt
+
 
 
 # two body acceleration
@@ -184,3 +186,20 @@ def move_to_center_of_mass_frame(bodies: list[Body]):
         bodies[i].position = bodies[i].position - position_cm
         
         bodies[i].velocity = bodies[i].velocity - velocity_cm
+
+#guess the period , take the index of the max_kin_values and use the associated time value
+#calculate the time between two max = period
+
+def measure_period_from_energy(kinetic_energy,
+                 time_values):
+    peak_indices = []
+
+    for i in range(len(kinetic_energy)):
+        if (kinetic_energy[i] > kinetic_energy[i-1]
+        and kinetic_energy[i] > kinetic_energy[i+1]):
+            peak_indices.append(i)
+
+    peak_times = time_values[peak_indices]
+    periods = np.diff(peak_times)
+
+    return np.mean(periods)
