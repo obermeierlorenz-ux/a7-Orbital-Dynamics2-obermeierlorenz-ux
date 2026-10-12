@@ -16,8 +16,8 @@ r2_light = np.array([d, 0.0])
 v1_heavy = np.array([0.0, 0.8])
 v2_light = np.array([0.0, 0.0])
 
-body1 = Body(mass=m_light, position = r1_heavy, velocity = v1_heavy)
-body2 = Body(mass=m_heavy, position = r2_light, velocity = v2_light)
+body1 = Body(mass=m_heavy, position = r1_heavy, velocity = v1_heavy)
+body2 = Body(mass=m_light, position = r2_light, velocity = v2_light)
 
 bodies = [body1, body2]
 
@@ -90,11 +90,28 @@ ax.legend()
 
 #zoom 
 
-plt.show()
+
 
 positions_heavy_ellipse = np.array(body1.position_history)
 positions_light_ellipse = np.array(body2.position_history)
 time_ellipse = time_values.copy()
+
+ax_inset = ax.inset_axes([0.58, 0.10, 0.35, 0.35])
+
+ax_inset.plot(positions_heavy_ellipse[:, 0],
+              positions_heavy_ellipse[:, 1])
+
+max_heavy = np.max(
+    np.linalg.norm(positions_heavy_ellipse, axis=1)
+)
+
+ax_inset.set_xlim(-1.1 * max_heavy, 1.1 * max_heavy)
+ax_inset.set_ylim(-1.1 * max_heavy, 1.1 * max_heavy)
+ax_inset.set_title('Heavy body zoom', fontsize=8)
+ax_inset.grid()
+ax_inset.set_aspect('equal')
+
+plt. show()
 
 #Energie plot
 #calculate the Energie 
@@ -165,8 +182,8 @@ v_c = np.sqrt(G * ( m_heavy + m_light) / d )
 v1_heavy = np.array([0.0, 0.0])
 v2_light = np.array([0.0, v_c])
 
-body1 = Body(mass=m_light, position = r1_heavy, velocity = v1_heavy)
-body2 = Body(mass=m_heavy, position = r2_light, velocity = v2_light)
+body1 = Body(mass=m_heavy, position = r1_heavy, velocity = v1_heavy)
+body2 = Body(mass=m_light, position = r2_light, velocity = v2_light)
 
 bodies = [body1, body2]
 
@@ -234,11 +251,25 @@ ax.set_title(' Circular orbit')
 ax.set_aspect('equal', adjustable='box')
 ax.grid()
 ax.legend()
-plt.show()
+
 
 positions_heavy_circle = np.array(body1.position_history)
 positions_light_circle = np.array(body2.position_history)
 time_circle = time_values.copy()
+ax_inset = ax.inset_axes([0.58, 0.10, 0.35, 0.35])
+
+ax_inset.plot(positions1[:, 0], positions1[:, 1])
+
+max_heavy = np.max(np.linalg.norm(positions1, axis=1))
+
+ax_inset.set_xlim(-1.1 * max_heavy, 1.1 * max_heavy)
+ax_inset.set_ylim(-1.1 * max_heavy, 1.1 * max_heavy)
+
+ax_inset.set_title('Heavy body zoom', fontsize=8)
+ax_inset.set_aspect('equal')
+ax_inset.grid()
+
+plt.show()
 
 #Energie plot
 #calculate the Energie 
