@@ -26,14 +26,12 @@ body3 = Body(mass=m3, position = r3, velocity = v3)
 bodies = [body1, body2, body3]
 
 
-print('Preliminary heavy velocity:', body1.velocity)
-print('Preliminary light velocity:', body2.velocity)
 #move all in the center
 move_to_center_of_mass_frame(bodies)
 
-print('CM-frame heavy velocity:', body1.velocity)
-print('CM-frame light velocity:', body2.velocity)
 
+initial_momentum = total_momentum(bodies)
+print('Initial total momentum:', initial_momentum)
 
 for body in bodies: 
     body.record_state()
@@ -48,9 +46,10 @@ a_rel = 1 / inv_arel
 
 Time_period = 2 * np.pi* np.sqrt(a_rel**3 / (G *  (m1 + m2)))
 T10 = Time_period * 10
-n_steps = 2000
+n_steps = 5000
 h = T10 / n_steps
-print(T10)
+
+
 time_values = [0.0]
 for steps in range (n_steps):
     vel_verlet(bodies, h, G)
@@ -90,7 +89,7 @@ ax.plot(positions3[0, 0], positions3[0, 1],
 ax.set_xlabel('x')
 ax.set_ylabel('y')
 ax.set_title('Three body ejection')
-ax.set_aspect('equal', adjustable='box')
+ax.set_aspect('equal', adjustable='datalim')
 ax.grid()
 ax.legend()
 
@@ -228,10 +227,11 @@ ax.plot(position_23[0, 0], position_23[0, 1],
 ax.set_xlabel('x')
 ax.set_ylabel('y')
 ax.set_title('Pairwise distances')
-ax.set_aspect('equal', adjustable='box')
+ax.set_aspect('equal', adjustable='datalim')
 ax.grid()
 ax.legend()
 
+#closeup
 
 ax_inset = ax.inset_axes([0.58, 0.10, 0.35, 0.35])
 
@@ -297,4 +297,53 @@ E_ij = 1/2 * μ_12 * (magnitudes_diffv1v2) - (G*m1*m2/r_12**3)
 print()
 print(f'Pair energy between Body 1 and 2: {E_ij}')
 
-#
+# ramaining body
+
+# Center of mass of the final binary 
+binary_cm =( m1 * positions1 + m2 * positions2)/ (m1 + m2)
+
+# Distance of the remaining body from the binary CM
+r3_from_binary = positions3 - binary_cm
+
+distance_to_binary = np.linalg.norm(r3_from_binary, axis=1)
+
+#plot 
+fig4 = plt.figure()
+ax4 = fig4.add_axes([0.12, 0.12, 0.80, 0.80])
+
+ax4.plot(time_values, distance_to_binary)
+
+ax4.set_xlabel('Time t')
+ax4.set_ylabel('Distance from binary center of mass')
+ax4.set_title('Remaining Body Moving Away from Final Binary')
+ax4.grid()
+
+plt.show()
+
+#diviation Plot
+
+
+# Initial total momentum in the center-of-mass fram
+#did it after moving the body to the center bofor
+
+# Center-of-mass position at every stored time
+cm_positions = (m1 * positions1 + m2 * positions2 + m3* positions3) / (m1 + m2 + m3)
+
+# Deviation from the initial center-of-mass position
+cm_deviation = np.linalg.norm(cm_positions - cm_positions[0], axis=1)
+
+
+print('Maximum center-of-mass deviation:',
+      np.max(cm_deviation))
+
+# Plot center-of-mass deviation
+fig5 = plt.figure()
+ax5 = fig5.add_axes([0.12, 0.12, 0.80, 0.80])
+
+ax5.plot(time_values, cm_deviation)
+ax5.set_xlabel('Time t')
+ax5.set_ylabel('Center-of-mass deviation')
+ax5.set_title('Center-of-Mass Deviation')
+ax5.grid()
+
+plt.show()

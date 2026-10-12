@@ -415,8 +415,6 @@ relative_ellipse = positions_light_ellipse - positions_heavy_ellipse
 relative_circle = positions_light_circle - positions_heavy_circle
 
 
-
-
 fig5 = plt.figure()
 ax5 = fig5.add_axes([0.12, 0.12, 0.80, 0.80])
 
