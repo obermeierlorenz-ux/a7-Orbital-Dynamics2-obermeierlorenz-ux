@@ -46,7 +46,7 @@ a_rel = 1 / inv_arel
 
 Time_period = 2 * np.pi* np.sqrt(a_rel**3 / (G *  (m1 + m2)))
 T10 = Time_period * 10
-n_steps = 5000
+n_steps = 10000
 h = T10 / n_steps
 
 
@@ -282,7 +282,7 @@ print(f'Overall minimum pairwise distance: {minimum_pairwise_distance:.6e}')
 
 #Final bound
 
-μ_12 = m1*m2 / m1+m2
+μ_12 = m1*m2 / (m1+m2)
 
 velocity_m1 = np.array(body1.velocity_history[-1])
 velocity_m2 = np.array(body2.velocity_history[-1])
@@ -290,22 +290,43 @@ velocity_m2 = np.array(body2.velocity_history[-1])
 diff_v1v2 = velocity_m1 - velocity_m2
 magnitudes_diffv1v2 = np.linalg.norm(diff_v1v2)
 
-r_12 = np.linalg.norm(r2 - r1)# gives me one number v_0
+r_12 = np.linalg.norm(body1.position_history[-1] - body2.position_history[-1])# gives me one number v_0
 
-E_ij = 1/2 * μ_12 * (magnitudes_diffv1v2) - (G*m1*m2/r_12**3)
+E_12 = 1/2 * μ_12 * (magnitudes_diffv1v2)**2 - (G*m1*m2/r_12)
+
+r_13 = np.linalg.norm(
+    body1.position_history[-1] - body3.position_history[-1]
+)
+v_13 = np.linalg.norm(
+    body1.velocity_history[-1] - body3.velocity_history[-1]
+)
+mu_13 = (m1 * m3) / (m1 + m3)
+E_13 = 0.5 * mu_13 * v_13**2 - (G * m1 * m3 / r_13)
+
+
+r_23 = np.linalg.norm(
+    body2.position_history[-1] - body3.position_history[-1]
+)
+v_23 = np.linalg.norm(
+    body2.velocity_history[-1] - body3.velocity_history[-1]
+)
+mu_23 = (m2 * m3) / (m2 + m3)
+E_23 = 0.5 * mu_23 * v_23**2 - (G * m2 * m3 / r_23)
 
 print()
-print(f'Pair energy between Body 1 and 2: {E_ij}')
+print(f'Final pair energy E_12: {E_12}')
+print(f'Final pair energy E_13: {E_13}')
+print(f'Final pair energy E_23: {E_23}')
 
 # ramaining body
 
 # Center of mass of the final binary 
-binary_cm =( m1 * positions1 + m2 * positions2)/ (m1 + m2)
+binary_cm = ( m1 * positions1 + m3 * positions2)/ (m1 + m3)
 
 # Distance of the remaining body from the binary CM
-r3_from_binary = positions3 - binary_cm
+r2_from_binary = positions2 - binary_cm
 
-distance_to_binary = np.linalg.norm(r3_from_binary, axis=1)
+distance_to_binary = np.linalg.norm(r2_from_binary, axis=1)
 
 #plot 
 fig4 = plt.figure()
